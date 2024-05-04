@@ -26,6 +26,8 @@ export const SignUp = () => {
       name: name,
       password: password,
     };
+    console.log(url);
+    console.log('Constructed URL:', `${url}/users`);
 
     axios
       .post(`${url}/users`, data)
@@ -33,9 +35,10 @@ export const SignUp = () => {
         // const token = res.data.token;
         dispatch(signIn());
         // setCookie('token', token);
-        navigate.push('/');
+        navigate('/');
       })
       .catch((err) => {
+        console.log('Error details:', err);
         setErrorMessge(`サインアップに失敗しました。 ${err}`);
       });
 
