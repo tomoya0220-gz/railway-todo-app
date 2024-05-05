@@ -26,8 +26,6 @@ export const SignUp = () => {
       name: name,
       password: password,
     };
-    console.log(url);
-    console.log('Constructed URL:', `${url}/users`);
 
     axios
       .post(`${url}/users`, data)

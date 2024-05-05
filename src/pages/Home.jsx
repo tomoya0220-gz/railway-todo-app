@@ -5,13 +5,16 @@ import axios from 'axios';
 import { Header } from '../components/Header';
 import { url } from '../const';
 import './home.scss';
-import PropTypes from 'prop-types';
 
-export const Home = () => {
-  const [isDoneDisplay, setIsDoneDisplay] = useState('todo'); // todo->未完了 done->完了
+export const Home = ({
+  tasks = [],
+  selectListId = '',
+  isDoneDisplay = 'todo',
+}) => {
+  const [isDoneDisplayState, setIsDoneDisplay] = useState(isDoneDisplay); // todo->未完了 done->完了
   const [lists, setLists] = useState([]);
-  const [selectListId, setSelectListId] = useState();
-  const [tasks, setTasks] = useState([]);
+  const [selectListIdState, setSelectListId] = useState(selectListId);
+  const [tasksState, setTasks] = useState(tasks);
   const [errorMessage, setErrorMessage] = useState('');
   const [cookies] = useCookies();
   const handleIsDoneDisplayChange = (e) => setIsDoneDisplay(e.target.value);
@@ -19,7 +22,7 @@ export const Home = () => {
     axios
       .get(`${url}/lists`, {
         headers: {
-          authorization: `Bearer ${cookies.token}`,
+          Authorization: `Bearer ${cookies.token}`,
         },
       })
       .then((res) => {
@@ -28,29 +31,25 @@ export const Home = () => {
       .catch((err) => {
         setErrorMessage(`リストの取得に失敗しました。${err}`);
       });
-  }, []);
+  }, [cookies.token]);
 
   useEffect(() => {
-    const listId = lists[0]?.id;
-    if (typeof listId !== 'undefined') {
-      setSelectListId(listId);
-      axios
-        .get(`${url}/lists/${listId}/tasks`, {
-          headers: {
-            authorization: `Bearer ${cookies.token}`,
-          },
-        })
-        .then((res) => {
-          setTasks(res.data.tasks);
-        })
-        .catch((err) => {
-          setErrorMessage(`タスクの取得に失敗しました。${err}`);
-        });
+    if(selectListId) {
+      axios.get(`${url}/lists/${selectListId}/tasks`, {
+        headers: {
+          Aithorization: `Bearer ${cookies.token}`,
+        },
+      }).then((res) => {
+        setTasks(res.data.tasks);
+      }).catch((err) => {
+        setErrorMessage(`タスクの取得に失敗しました。 ${err}`);
+      });
     }
-  }, [lists]);
+  }, [selectListId, cookies.token]);
 
   const handleSelectList = (id) => {
     setSelectListId(id);
+    console.log('Authorization Token:', cookies.token);
     axios
       .get(`${url}/lists/${id}/tasks`, {
         headers: {
@@ -61,6 +60,7 @@ export const Home = () => {
         setTasks(res.data.tasks);
       })
       .catch((err) => {
+        console.log('Authorization Token:', cookies.token);
         setErrorMessage(`タスクの取得に失敗しました。${err}`);
       });
   };
@@ -77,7 +77,7 @@ export const Home = () => {
                 <Link to="/list/new">リスト新規作成</Link>
               </p>
               <p>
-                <Link to={`/lists/${selectListId}/edit`}>
+                <Link to={`/lists/${selectListIdState}/edit`}>
                   選択中のリストを編集
                 </Link>
               </p>
@@ -85,7 +85,7 @@ export const Home = () => {
           </div>
           <ul className="list-tab">
             {lists.map((list, key) => {
-              const isActive = list.id === selectListId;
+              const isActive = list.id === selectListIdState;
               return (
                 <li
                   key={key}
@@ -112,21 +112,15 @@ export const Home = () => {
               </select>
             </div>
             <Tasks
-              tasks={tasks}
-              selectListId={selectListId}
-              isDoneDisplay={isDoneDisplay}
+              tasks={tasksState}
+              selectListId={selectListIdState}
+              isDoneDisplay={isDoneDisplayState}
             />
           </div>
         </div>
       </main>
     </div>
   );
-};
-
-Home.propTypes = {
-  tasks: PropTypes.array.isRequired,
-  selectListId: PropTypes.string.isRequired,
-  isDoneDisplay: PropTypes.oneOf(['todo', 'done']).isRequired,
 };
 
 // 表示するタスク
@@ -177,10 +171,4 @@ const Tasks = (props) => {
         ))}
     </ul>
   );
-};
-
-Tasks.propTypes = {
-  tasks: PropTypes.array.isRequired,
-  selectListId: PropTypes.string.isRequired,
-  isDoneDisplay: PropTypes.oneOf(['todo', 'done']).isRequired,
 };
