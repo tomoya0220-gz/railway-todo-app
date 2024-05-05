@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-// import { useCookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { Header } from '../components/Header';
 import './signin.scss';
@@ -15,7 +15,7 @@ export const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState();
-  // const [cookies, setCookie, removeCookie] = useCookies();
+  const [, setCookie] = useCookies(['token']);
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
   const onSignIn = (event) => {
@@ -23,7 +23,7 @@ export const SignIn = () => {
     axios
       .post(`${url}/signin`, { email: email, password: password })
       .then((res) => {
-        // setCookie('token', res.data.token);
+        setCookie('token', res.data.token);
         dispatch(signIn());
         navigate('/');
       })
