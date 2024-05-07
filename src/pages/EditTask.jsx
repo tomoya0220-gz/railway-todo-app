@@ -12,16 +12,19 @@ export const EditTask = () => {
   const [cookies] = useCookies();
   const [title, setTitle] = useState('');
   const [detail, setDetail] = useState('');
-  const [isDone, setIsDone] = useState();
+  const [deadline, setDeadline] = useState('');
+  const [isDone, setIsDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleDetailChange = (e) => setDetail(e.target.value);
+  const handleDeadlineChange = (e) => setDeadline(e.target.value);
   const handleIsDoneChange = (e) => setIsDone(e.target.value === 'done');
   const onUpdateTask = () => {
     console.log(isDone);
     const data = {
       title: title,
       detail: detail,
+      deadline: deadline,
       done: isDone,
     };
 
@@ -33,7 +36,7 @@ export const EditTask = () => {
       })
       .then((res) => {
         console.log(res.data);
-        navigate.push('/');
+        navigate('/');
       })
       .catch((err) => {
         setErrorMessage(`更新に失敗しました。${err}`);
@@ -48,7 +51,7 @@ export const EditTask = () => {
         },
       })
       .then(() => {
-        navigate.push('/');
+        navigate('/');
       })
       .catch((err) => {
         setErrorMessage(`削除に失敗しました。${err}`);
@@ -66,12 +69,13 @@ export const EditTask = () => {
         const task = res.data;
         setTitle(task.title);
         setDetail(task.detail);
+        setDeadline(task.deadline);
         setIsDone(task.done);
       })
       .catch((err) => {
         setErrorMessage(`タスク情報の取得に失敗しました。${err}`);
       });
-  }, []);
+  }, [taskId, listId, cookies.token]);
 
   return (
     <div>
@@ -98,6 +102,12 @@ export const EditTask = () => {
             value={detail}
           />
           <br />
+          <label>期限日時</label>
+          <input
+            type="datetime-local"
+            onChange={handleDeadlineChange}
+            value={deadline}
+          />
           <div>
             <input
               type="radio"

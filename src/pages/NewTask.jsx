@@ -11,16 +11,19 @@ export const NewTask = () => {
   const [lists, setLists] = useState([]);
   const [title, setTitle] = useState('');
   const [detail, setDetail] = useState('');
+  const [deadline, setDeadline] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [cookies] = useCookies();
   const navigate = useNavigate();
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleDetailChange = (e) => setDetail(e.target.value);
+  const handleDeadlineChange = (e) => setDeadline(e.target.value);
   const handleSelectList = (id) => setSelectListId(id);
   const onCreateTask = () => {
     const data = {
       title: title,
       detail: detail,
+      deadline: deadline,
       done: false,
     };
 
@@ -90,6 +93,13 @@ export const NewTask = () => {
             className="new-task-detail"
           />
           <br />
+          <label>期限日</label>
+          <br />
+          <input
+            type="datetime-local"
+            onChange={handleDeadlineChange}
+            className="new-task-deadline"
+          />
           <button
             type="button"
             className="new-task-button"

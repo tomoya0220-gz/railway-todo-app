@@ -40,6 +40,7 @@ export const Home = ({
           Aithorization: `Bearer ${cookies.token}`,
         },
       }).then((res) => {
+        console.log("Tasks data:", res.data);
         setTasks(res.data.tasks);
       }).catch((err) => {
         setErrorMessage(`タスクの取得に失敗しました。 ${err}`);
@@ -128,6 +129,21 @@ const Tasks = (props) => {
   const { tasks, selectListId, isDoneDisplay } = props;
   if (tasks === null) return <></>;
 
+  function getRemainingTime(deadline) {
+    const now = new Date();
+    const deadlineDate = new Date(deadline);
+    const timeDiff = deadlineDate - now;
+  
+    if(timeDiff > 0) {
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((timeDiff / 1000 / 60) % 60);
+      return `{days}日 ${hours}時間 ${minutes}分`;
+    } else {
+      return `時間切れ`;
+    }
+  }
+
   if (isDoneDisplay == 'done') {
     return (
       <ul>
@@ -142,6 +158,8 @@ const Tasks = (props) => {
                 className="task-item-link"
               >
                 {task.title}
+                <br />
+                {task.deadline && <p>期限: {new Date(task.deadline).toLocaleString()}</p> }
                 <br />
                 {task.done ? '完了' : '未完了'}
               </Link>
