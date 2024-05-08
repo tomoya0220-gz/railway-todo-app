@@ -12,22 +12,30 @@ export const EditTask = () => {
   const [cookies] = useCookies();
   const [title, setTitle] = useState('');
   const [detail, setDetail] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [limit, setLimit] = useState('');
   const [isDone, setIsDone] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleDetailChange = (e) => setDetail(e.target.value);
-  const handleDeadlineChange = (e) => setDeadline(e.target.value);
-  const handleIsDoneChange = (e) => setIsDone(e.target.value === 'done');
-  const onUpdateTask = () => {
-    console.log(isDone);
+  const handleLimitChange = (e) => {
+    const localDate = new Date(e.target.value);
+    const isoDate = localDate.toISOString();
+    setLimit(isoDate);
+  };
+  const handleIsDoneChange = (e) => {
+    console.log('Checked value:', e.target.checked);
+    setIsDone(e.target.checked);
+  };
+  const onUpdateTask = async () => {
+    console.log('Final is Done value before sending:', isDone);
+
     const data = {
       title: title,
       detail: detail,
-      deadline: deadline,
+      limit: limit,
       done: isDone,
     };
-
+    console.log('Sending data:', data);
     axios
       .put(`${url}/lists/${listId}/tasks/${taskId}`, data, {
         headers: {
@@ -35,10 +43,11 @@ export const EditTask = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
-        navigate('/');
+        console.log('Update response:', res.data);
+        navigate('/', { state: { limit: limit } });
       })
       .catch((err) => {
+        console.log(err.data);
         setErrorMessage(`更新に失敗しました。${err}`);
       });
   };
@@ -67,9 +76,10 @@ export const EditTask = () => {
       })
       .then((res) => {
         const task = res.data;
+        console.log('Task data on load:', task);
         setTitle(task.title);
         setDetail(task.detail);
-        setDeadline(task.deadline);
+        setLimit(task.limit);
         setIsDone(task.done);
       })
       .catch((err) => {
@@ -105,26 +115,26 @@ export const EditTask = () => {
           <label>期限日時</label>
           <input
             type="datetime-local"
-            onChange={handleDeadlineChange}
-            value={deadline}
+            onChange={handleLimitChange}
+            value={limit ? new Date(limit).toISOString().slice(0, -1) : ''}
           />
           <div>
             <input
-              type="radio"
+              type="checkbox"
               id="todo"
               name="status"
               value="todo"
               onChange={handleIsDoneChange}
-              checked={isDone === false ? 'checked' : ''}
+              checked={!isDone}
             />
             未完了
             <input
-              type="radio"
+              type="checkbox"
               id="done"
               name="status"
               value="done"
               onChange={handleIsDoneChange}
-              checked={isDone === true ? 'checked' : ''}
+              checked={isDone}
             />
             完了
           </div>
