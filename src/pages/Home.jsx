@@ -69,6 +69,11 @@ export const Home = ({
         setErrorMessage(`タスクの取得に失敗しました。${err}`);
       });
   };
+  function handleKeyboardNavigation(event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.target.click();
+    }
+  }
   return (
     <div>
       <Header />
@@ -107,10 +112,16 @@ export const Home = ({
               <h2>タスク一覧</h2>
               <Link to="/task/new">タスク新規作成</Link>
             </div>
-            <div className="display-select-wrapper">
+            <div
+              className="display-select-wrapper"
+              onKeyDown={handleKeyboardNavigation}
+            >
               <select
                 onChange={handleIsDoneDisplayChange}
                 className="display-select"
+                tabIndex="0"
+                aria-label="Filter tasks by status"
+                role="combobox"
               >
                 <option value="todo">未完了</option>
                 <option value="done">完了</option>
