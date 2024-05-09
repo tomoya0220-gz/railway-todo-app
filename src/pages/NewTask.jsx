@@ -17,7 +17,11 @@ export const NewTask = () => {
   const navigate = useNavigate();
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleDetailChange = (e) => setDetail(e.target.value);
-  const handleLimitChange = (e) => setLimit(e.target.value);
+  const handleLimitChange = (e) => {
+    const localDate = new Date(e.target.value);
+    const isoDate = localDate.toISOString();
+    setLimit(isoDate);
+  };
   const handleSelectList = (id) => setSelectListId(id);
   const onCreateTask = () => {
     const data = {
@@ -98,6 +102,7 @@ export const NewTask = () => {
           <input
             type="datetime-local"
             onChange={handleLimitChange}
+            value={limit ? new Date(limit).toISOString().slice(0, -1) : ''}
             className="new-task-limit"
           />
           <button

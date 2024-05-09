@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Header } from '../components/Header';
 import { url } from '../const';
 import './home.scss';
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 
 export const Home = ({
   tasks = [],
@@ -131,8 +131,8 @@ export const Home = ({
 // 表示するタスク
 const Tasks = ({ tasks, selectListId, isDoneDisplay }) => {
   // if (!tasks) return null;
-  const location = useLocation();
-  const limitFromState = location.state?.limit;
+  // const location = useLocation();
+  // const limitFromState = location.state?.limit;
 
   function getRemainingTime(limit) {
     const now = new Date();
@@ -151,7 +151,9 @@ const Tasks = ({ tasks, selectListId, isDoneDisplay }) => {
 
   return (
     <ul>
-      {tasks.filter(task => task.done === (isDoneDisplay === 'done')).map((task, key) => (
+      {(tasks || [])
+        .filter((task) => task.done === (isDoneDisplay === 'done'))
+        .map((task, key) => (
           <li key={key} className="task-item">
             <Link
               to={`/lists/${selectListId}/tasks/${task.id}`}
