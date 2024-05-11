@@ -99,8 +99,11 @@ export const Home = ({
               return (
                 <li
                   key={key}
+                  role="tab"
+                  aria-selected={isActive ? 'true' : 'false'}
                   className={`list-tab-item ${isActive ? 'active' : ''}`}
                   onClick={() => handleSelectList(list.id)}
+                  tabIndex="0"
                 >
                   {list.title}
                 </li>
