@@ -1,7 +1,8 @@
 @charset "utf-8";
 
 .signin {
-  width: 500px;
+  max-width: 500px;
+  width: 90%;
   margin: 0 auto;
 }
 
@@ -17,6 +18,7 @@
 .email-input,
 .password-input {
   width: 100%;
+  max-width: 500px;
   font-size: large;
   height: 30px;
   margin-bottom: 25px;
@@ -25,11 +27,13 @@
 .signin-button {
   background-color: #242f9b;
   color: #ffffff;
-  width: 100px;
+  max-width: 100px;
+  width: auto;
   height: 40px;
   border-radius: 5px;
 }
 
 .error-message {
   color: #ff3333;
+  font-size: 1.2em;
 }
